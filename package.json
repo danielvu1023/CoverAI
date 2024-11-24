@@ -10,6 +10,7 @@
     "@types/node": "^16.18.119",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "cheerio": "^1.0.0",
     "chrome-types": "^0.1.320",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -25,7 +26,7 @@
     "eject": "react-scripts eject",
     "build": "webpack --config webpack.config.js",
     "watch": "webpack -w --config webpack.config.js",
-    "watch:tailwind" : "npx tailwindcss -i ./src/styles/index.css -o ./src/styles/output.css --watch"
+    "watch:tailwind": "npx tailwindcss -i ./src/styles/index.css -o ./src/styles/output.css --watch"
   },
   "eslintConfig": {
     "extends": [
