@@ -11,6 +11,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "axios": "^1.7.7",
+    "cheerio": "^1.0.0",
     "chrome-types": "^0.1.320",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^4.8.69",
@@ -29,7 +30,7 @@
     "eject": "react-scripts eject",
     "build": "webpack --config webpack.config.js",
     "watch": "webpack -w --config webpack.config.js",
-    "watch:tailwind" : "npx tailwindcss -i ./src/styles/index.css -o ./src/styles/output.css --watch"
+    "watch:tailwind": "npx tailwindcss -i ./src/styles/index.css -o ./src/styles/output.css --watch"
   },
   "eslintConfig": {
     "extends": [
