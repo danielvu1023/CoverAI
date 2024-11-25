@@ -1,6 +1,19 @@
 const extensions = "https://developer.chrome.com/docs/extensions";
 const webstore = "https://developer.chrome.com/docs/webstore";
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "processFile") {
+    chrome.storage.local.set({ templateResume: message.data }).then(() => {
+      console.log("value is set");
+    });
+    chrome.storage.local.get(["templateResume"]).then((result) => {
+      console.log("Value currently is " + result.templateResume);
+    });
+    sendResponse({ success: true });
+  }
+
+  return true;
+});
 chrome.runtime.onInstalled.addListener(() => {
   chrome.action.setBadgeText({
     text: "OFF",
@@ -35,3 +48,12 @@ chrome.action.onClicked.addListener(async (tab) => {
     }
   }
 });
+function base64ToArrayBuffer(base64: string): ArrayBuffer {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
