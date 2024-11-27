@@ -1,8 +1,10 @@
-const path = require("path");
-const HTMLPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
-
-module.exports = {
+import path from "path";
+import HTMLPlugin from "html-webpack-plugin";
+import CopyPlugin from "copy-webpack-plugin";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+export default {
   entry: {
     index: "./src/index.tsx",
     background: "./src/background.ts",
