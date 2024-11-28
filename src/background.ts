@@ -1,6 +1,13 @@
 const extensions = "https://developer.chrome.com/docs/extensions";
 const webstore = "https://developer.chrome.com/docs/webstore";
 
+function setupContextMenu() {
+  chrome.contextMenus.create({
+    id: "job-description",
+    title: "Highlight Core Description",
+    contexts: ["selection"],
+  });
+}
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "processFile") {
     chrome.storage.local.set({ templateResume: message.data }).then(() => {
@@ -18,6 +25,14 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.action.setBadgeText({
     text: "OFF",
   });
+  setupContextMenu();
+});
+
+chrome.contextMenus.onClicked.addListener((data, tab) => {
+  chrome.storage.session.set({ jobDescription: data.selectionText });
+
+  //@ts-ignore
+  chrome.sidePanel.open({ tabId: tab.id });
 });
 
 chrome.action.onClicked.addListener(async (tab) => {
