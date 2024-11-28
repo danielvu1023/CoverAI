@@ -8,7 +8,17 @@ function setupContextMenu() {
     contexts: ["selection"],
   });
 }
+chrome.runtime.onInstalled.addListener(() => {
+  setupContextMenu();
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "jobDetails") {
+    chrome.storage.session.set({
+      jobDescriptionContent: message.jobDescriptionContent,
+    });
+  }
+
   if (message.type === "processFile") {
     chrome.storage.local.set({ templateResume: message.data }).then(() => {
       console.log("value is set");
@@ -21,12 +31,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   return true;
 });
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.action.setBadgeText({
-    text: "OFF",
-  });
-  setupContextMenu();
-});
 
 chrome.contextMenus.onClicked.addListener((data, tab) => {
   chrome.storage.session.set({ jobDescription: data.selectionText });
@@ -35,34 +39,6 @@ chrome.contextMenus.onClicked.addListener((data, tab) => {
   chrome.sidePanel.open({ tabId: tab.id });
 });
 
-chrome.action.onClicked.addListener(async (tab) => {
-  if (tab.url?.startsWith(extensions) || tab.url?.startsWith(webstore)) {
-    // Retrieve the action badge to check if the extension is 'ON' or 'OFF'
-    const prevState = await chrome.action.getBadgeText({ tabId: tab.id });
-    // Next state will always be the opposite
-    const nextState = prevState === "ON" ? "OFF" : "ON";
-
-    // Set the action badge to the next state
-    await chrome.action.setBadgeText({
-      tabId: tab.id,
-      text: nextState,
-    });
-
-    if (nextState === "ON") {
-      // Insert the CSS file when the user turns the extension on
-      await chrome.scripting.insertCSS({
-        files: ["focus-mode.css"],
-        target: { tabId: tab.id! },
-      });
-    } else if (nextState === "OFF") {
-      // Remove the CSS file when the user turns the extension off
-      await chrome.scripting.removeCSS({
-        files: ["focus-mode.css"],
-        target: { tabId: tab.id! },
-      });
-    }
-  }
-});
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binaryString = atob(base64);
   const len = binaryString.length;
