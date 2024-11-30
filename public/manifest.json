@@ -3,18 +3,26 @@
   "manifest_version": 3,
   "name": "CoverAI",
   "description": "Enable focus mode on Chrome's official Extensions and Chrome Web Store documentation.",
-  "permissions": ["scripting", "storage", "sidePanel", "contextMenus"],
+  "permissions": ["scripting", "storage", "sidePanel", "contextMenus", "tabs"],
   "side_panel": {
     "default_path": "index.html"
   },
   "action": {
     "default_title": "React Chrome Extension",
-   
+
     "default_icon": {
       "16": "images/icon-16.png",
       "32": "images/icon-32.png",
       "48": "images/icon-48.png",
       "128": "images/icon-128.png"
+    }
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+B",
+        "mac": "Command+B"
+      }
     }
   },
   "background": {
