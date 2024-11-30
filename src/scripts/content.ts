@@ -1,6 +1,14 @@
 import * as cheerio from "cheerio";
 
-setTimeout(getJobDetails, 3000);
+// setTimeout(getJobDetails, 3000);
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log("an action has come");
+  if (request.action === "parse_content") {
+    console.log("hit it");
+    getJobDetails();
+  }
+});
 
 function getJobDetails() {
   const $ = cheerio.load(new XMLSerializer().serializeToString(document));

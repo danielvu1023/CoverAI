@@ -10,12 +10,19 @@ function setupContextMenu() {
 }
 chrome.runtime.onInstalled.addListener(() => {
   setupContextMenu();
+  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "jobDetails") {
     chrome.storage.session.set({
       jobDescriptionContent: message.jobDescriptionContent,
+    });
+  }
+  if (message.type === "parseContent") {
+    sendResponse({ success: true });
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0]?.id!, { action: "parse_content" });
     });
   }
 
@@ -35,8 +42,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.contextMenus.onClicked.addListener((data, tab) => {
   chrome.storage.session.set({ jobDescription: data.selectionText });
 
-  //@ts-ignore
-  chrome.sidePanel.open({ tabId: tab.id });
+  chrome.sidePanel.open({ tabId: tab?.id! });
 });
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
@@ -48,3 +54,27 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
   }
   return bytes.buffer;
 }
+
+const LINKEDIN_ORIGIN = "https://www.linkedin.com";
+
+chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
+  console.log("hello", tab.url);
+  if (!tab.url) return;
+  const url = new URL(tab.url);
+  console.log("url.origin", url.origin);
+  // Enables the side panel on linkedin.com
+  if (url.origin === LINKEDIN_ORIGIN) {
+    console.log("open side panel");
+    await chrome.sidePanel.setOptions({
+      tabId,
+      path: "index.html",
+      enabled: true,
+    });
+  } else {
+    // Disables the side panel on all other sites
+    await chrome.sidePanel.setOptions({
+      tabId,
+      enabled: false,
+    });
+  }
+});

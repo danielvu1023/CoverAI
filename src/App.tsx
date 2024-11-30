@@ -94,51 +94,65 @@ function App() {
     };
     reader.readAsArrayBuffer(selectedFile);
   };
-  if (loading) return <p>Loading Resume...</p>;
   return (
-    <div className="App text-green-500 w-[500px] h-[500px]">
-      <input type="file" onChange={handleFileChange} />
-      <ul>
-        {suggestions.map((suggestion) => (
-          <li>{suggestion}</li>
-        ))}
-      </ul>
-      <h2>Resume</h2>
-      {resume ? (
-        <div>
-          <h2> Summary</h2>
-          <p>{resume.summary}</p>
-          <h2>Technology</h2>
-          <ul>
-            {Object.entries(resume.technology).map(([key, value]) => (
-              <li>{`${key}: ${(value as string[])[0]}`}</li>
-            ))}
-          </ul>
-          <h2>Experience</h2>
-          <ul>
-            {resume.experience[0].responsibilities.map(
-              (responsibility: string) => (
-                <li>{responsibility}</li>
-              )
-            )}
-          </ul>
-        </div>
-      ) : (
-        <p>no</p>
-      )}
-      {/* {resume && (
-        <div>
-          <h2>Technology</h2>
-          <ul>
-            {Object.entries(resume.technology).map(([key, value]) => (
-              <li>{`${key}: ${(value as string[])[0]}`}</li>
-            ))}
-          </ul>
-        </div>
-      )} */}
-      {/* <p>{listOfSkills}</p> */}
+    <div>
+      <h1>All sites sidepanel extension</h1>
+      <button
+        onClick={() => {
+          chrome.runtime.sendMessage({
+            type: "parseContent",
+          });
+        }}
+      >
+        Parse Content
+      </button>
     </div>
   );
+  // if (loading) return <p>Loading Resume...</p>;
+  // return (
+  //   <div className="App text-green-500 w-[500px] h-[500px]">
+  //     <input type="file" onChange={handleFileChange} />
+  //     <ul>
+  //       {suggestions.map((suggestion) => (
+  //         <li>{suggestion}</li>
+  //       ))}
+  //     </ul>
+  //     <h2>Resume</h2>
+  //     {resume ? (
+  //       <div>
+  //         <h2> Summary</h2>
+  //         <p>{resume.summary}</p>
+  //         <h2>Technology</h2>
+  //         <ul>
+  //           {Object.entries(resume.technology).map(([key, value]) => (
+  //             <li>{`${key}: ${(value as string[])[0]}`}</li>
+  //           ))}
+  //         </ul>
+  //         <h2>Experience</h2>
+  //         <ul>
+  //           {resume.experience[0].responsibilities.map(
+  //             (responsibility: string) => (
+  //               <li>{responsibility}</li>
+  //             )
+  //           )}
+  //         </ul>
+  //       </div>
+  //     ) : (
+  //       <p>no</p>
+  //     )}
+  //     {/* {resume && (
+  //       <div>
+  //         <h2>Technology</h2>
+  //         <ul>
+  //           {Object.entries(resume.technology).map(([key, value]) => (
+  //             <li>{`${key}: ${(value as string[])[0]}`}</li>
+  //           ))}
+  //         </ul>
+  //       </div>
+  //     )} */}
+  //     {/* <p>{listOfSkills}</p> */}
+  //   </div>
+  // );
 }
 
 export default App;
