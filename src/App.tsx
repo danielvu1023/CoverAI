@@ -79,7 +79,7 @@ function App() {
         const arrayBuffer = e.target.result;
         chrome.runtime.sendMessage(
           {
-            type: "processFile",
+            action: "processFile",
             data: arrayBufferToBase64(arrayBuffer as ArrayBuffer),
           },
           (response) => {
@@ -100,7 +100,7 @@ function App() {
       <button
         onClick={() => {
           chrome.runtime.sendMessage({
-            type: "parseContent",
+            action: "parseContent",
           });
         }}
       >

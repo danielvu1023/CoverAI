@@ -3,9 +3,7 @@ import * as cheerio from "cheerio";
 // setTimeout(getJobDetails, 3000);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("an action has come");
   if (request.action === "parse_content") {
-    console.log("hit it");
     getJobDetails();
   }
 });
@@ -22,7 +20,7 @@ function getJobDetails() {
     .text()
     .trim();
   chrome.runtime.sendMessage({
-    type: "jobDetails",
+    action: "jobDetails",
     jobDescriptionContent: jobDescription,
   });
   console.log("jobTitle", jobTitle);

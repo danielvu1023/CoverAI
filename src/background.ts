@@ -14,12 +14,12 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "jobDetails") {
+  if (message.action === "jobDetails") {
     chrome.storage.session.set({
       jobDescriptionContent: message.jobDescriptionContent,
     });
   }
-  if (message.type === "parseContent") {
+  if (message.action === "parseContent") {
     sendResponse({ success: true });
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       chrome.tabs.sendMessage(tabs[0]?.id!, { action: "parse_content" });
