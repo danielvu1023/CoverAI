@@ -1,111 +1,131 @@
 import { useState, useEffect } from "react";
+import Resume from "./components/resume";
+import type { JobInfo } from "./types";
+
 function App() {
+  // const [jobChangeListener, setJobChangeListener] = useState();
   const [loading, setLoading] = useState(false);
+  // @ts-ignore
+  const [jobInfo, setJobInfo] = useState<JobInfo | null>(null);
   const [jobDescription, setJobDescription] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [skills, setSkills] = useState("");
   const [listOfSkills, setListOfSkills] = useState<string[]>([]);
   const [resume, setResume] = useState<any>(null);
+
+  function updateJobDetails(jobInfo: JobInfo) {
+    console.log("jobInfo", jobInfo);
+  }
+
   useEffect(() => {
-    chrome.storage.session.get(["jobDescription"], (result) => {
-      if (result.jobDescription) {
-        setJobDescription(result.jobDescription);
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      console.log("onChanged", changes);
+      for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+        console.log("jobInfo", newValue);
+        if (key === "jobInfo") {
+          console.log("jobInfo", newValue);
+        }
       }
     });
   }, []);
-  useEffect(() => {
-    chrome.storage.session.get("jobDescriptionContent", (result) => {
-      if (result.jobDescriptionContent) {
-        console.log("result", result.jobDescriptionContent);
-        setSkills(result.jobDescriptionContent);
-      }
-    });
-  }, []);
-  useEffect(() => {
-    async function getAIResponse() {
-      // setLoading(true);
-      //@ts-ignore
-      const writer = await ai.writer.create({ sharedContext: "resume" });
-      console.log("job", jobDescription);
-      const bullets = splitIntoBullets(jobDescription);
-      const listOfSuggestions = [];
 
-      for (const bullet of bullets) {
-        const result = await writer.write(
-          `Create a single ideal resume bullet point outlining a work experience that matches this description: ${bullet}`
-        );
-        listOfSuggestions.push(result);
-      }
-      setSuggestions(listOfSuggestions);
-      // setLoading(false);
-    }
-    getAIResponse();
-  }, [jobDescription]);
-  useEffect(() => {
-    async function getSkills() {
-      const { available } =
-        //@ts-ignore
-        await ai.languageModel.capabilities();
+  // useEffect(() => {
+  //   async function getAIResponse() {
+  //     // setLoading(true);
+  //     //@ts-ignore
+  //     const writer = await ai.writer.create({ sharedContext: "resume" });
 
-      if (available !== "no") {
-        setLoading(true);
-        //@ts-ignore
-        const session = await ai.languageModel.create();
-        console.log("skill", skills);
-        // Prompt the model and wait for the whole result to come back.
-        const result = await session.prompt(
-          `Can you only provide a summary, experience, and technology section for a resume based on this job description: ${skills}`
-        );
-        console.log("result", result);
-        const parsedResume = parseResume(result);
-        console.log(parsedResume);
-        setResume(parsedResume);
-        setLoading(false);
-        // const skillsArray = convertListToArray(result);
-        // setListOfSkills(["hey"]);
-        session.destroy();
-      }
-    }
-    getSkills();
-  }, [skills]);
-  const handleFileChange = (event: any) => {
-    const selectedFile: File | undefined = event.target.files[0];
-    if (!selectedFile) {
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = async function (e) {
-      if (e.target?.result) {
-        const arrayBuffer = e.target.result;
-        chrome.runtime.sendMessage(
-          {
-            action: "processFile",
-            data: arrayBufferToBase64(arrayBuffer as ArrayBuffer),
-          },
-          (response) => {
-            if (response && response.success) {
-              console.log("response", response);
-            } else {
-              console.error("Error processing file");
-            }
-          }
-        );
-      }
-    };
-    reader.readAsArrayBuffer(selectedFile);
-  };
+  //     const bullets = splitIntoBullets(jobDescription);
+  //     const listOfSuggestions = [];
+
+  //     for (const bullet of bullets) {
+  //       const result = await writer.write(
+  //         `Create a single ideal resume bullet point outlining a work experience that matches this description: ${bullet}`
+  //       );
+  //       listOfSuggestions.push(result);
+  //     }
+  //     setSuggestions(listOfSuggestions);
+  //     // setLoading(false);
+  //   }
+  //   getAIResponse();
+  // }, [jobDescription]);
+
+  // useEffect(() => {
+  //   async function getSkills() {
+  //     const { available } =
+  //       //@ts-ignore
+  //       await ai.languageModel.capabilities();
+
+  //     if (available !== "no") {
+  //       setLoading(true);
+  //       //@ts-ignore
+  //       const session = await ai.languageModel.create({
+  //         systemPrompt:
+  //           "You are a job requirements analysis tool, specialized in analyzing job postings to identify required skills, experience, and other qualifications. Your goal is to provide clear and structured analysis results to help users better understand the job requirements.",
+  //       });
+  //       // Prompt the model and wait for the whole result to come back.
+  //       const result = await session.prompt(
+  //         `Can you only provide a summary, experience, and technology section for a resume based on this job description: ${skills}`
+  //       );
+  //       console.log("result", result);
+  //       const parsedResume = parseResume(result);
+  //       console.log(parsedResume);
+  //       setResume(parsedResume);
+  //       setLoading(false);
+  //       // const skillsArray = convertListToArray(result);
+  //       // setListOfSkills(["hey"]);
+  //       session.destroy();
+  //     }
+  //   }
+  //   getSkills();
+  // }, [skills]);
+  // const handleFileChange = (event: any) => {
+  //   const selectedFile: File | undefined = event.target.files[0];
+  //   if (!selectedFile) {
+  //     return;
+  //   }
+  //   const reader = new FileReader();
+  //   reader.onload = async function (e) {
+  //     if (e.target?.result) {
+  //       const arrayBuffer = e.target.result;
+  //       chrome.runtime.sendMessage(
+  //         {
+  //           action: "processFile",
+  //           data: arrayBufferToBase64(arrayBuffer as ArrayBuffer),
+  //         },
+  //         (response) => {
+  //           if (response && response.success) {
+  //             console.log("response", response);
+  //           } else {
+  //             console.error("Error processing file");
+  //           }
+  //         }
+  //       );
+  //     }
+  //   };
+  //   reader.readAsArrayBuffer(selectedFile);
+  // };
   return (
     <div>
-      <h1>All sites sidepanel extension</h1>
+      <h1>Cover AI</h1>
       <button
         onClick={() => {
-          chrome.runtime.sendMessage({
-            action: "parseContent",
-          });
+          chrome.runtime.sendMessage(
+            {
+              action: "parse-content",
+            },
+            (jobInfoResp: JobInfo) => {
+              setJobInfo(jobInfoResp);
+            }
+          );
         }}
       >
         Parse Content
       </button>
+      <p className="job-title">Apply to: {jobInfo?.title}</p>
+      <hr />
+      {jobInfo !== null && <Resume jobInfo={jobInfo} />}
+      {/* <p className="job-description">Description: {jobInfo?.description}</p> */}
     </div>
   );
   // if (loading) return <p>Loading Resume...</p>;

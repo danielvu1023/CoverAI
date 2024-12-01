@@ -8,30 +8,31 @@ function setupContextMenu() {
     contexts: ["selection"],
   });
 }
+
 chrome.runtime.onInstalled.addListener(() => {
   setupContextMenu();
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "jobDetails") {
-    chrome.storage.session.set({
-      jobDescriptionContent: message.jobDescriptionContent,
-    });
+  if (message.action === "parse-content") {
+    proxyMessageToClient(message, sendResponse);
   }
-  if (message.action === "parseContent") {
-    sendResponse({ success: true });
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.tabs.sendMessage(tabs[0]?.id!, { action: "parse_content" });
+
+  if (message.action === "update-job-detail") {
+    chrome.storage.local.set({
+      jobInfo: message.jobInfo,
     });
   }
 
+  // ==================================================
+
   if (message.type === "processFile") {
     chrome.storage.local.set({ templateResume: message.data }).then(() => {
-      console.log("value is set");
+      // console.log("value is set");
     });
     chrome.storage.local.get(["templateResume"]).then((result) => {
-      console.log("Value currently is " + result.templateResume);
+      // console.log("Value currently is " + result.templateResume);
     });
     sendResponse({ success: true });
   }
@@ -41,9 +42,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 chrome.contextMenus.onClicked.addListener((data, tab) => {
   chrome.storage.session.set({ jobDescription: data.selectionText });
-
   chrome.sidePanel.open({ tabId: tab?.id! });
 });
+
+/**
+ * Proxies a message from the background script to the content script or sidePanel
+ */
+function proxyMessageToClient(
+  message: any,
+  sendResponse?: (response: any) => void
+) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0]?.id!, message, sendResponse || (() => {}));
+  });
+}
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binaryString = atob(base64);
@@ -58,13 +70,10 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
 const LINKEDIN_ORIGIN = "https://www.linkedin.com";
 
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
-  console.log("hello", tab.url);
   if (!tab.url) return;
   const url = new URL(tab.url);
-  console.log("url.origin", url.origin);
   // Enables the side panel on linkedin.com
   if (url.origin === LINKEDIN_ORIGIN) {
-    console.log("open side panel");
     await chrome.sidePanel.setOptions({
       tabId,
       path: "index.html",

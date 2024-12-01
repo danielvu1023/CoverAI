@@ -3,8 +3,9 @@ import * as cheerio from "cheerio";
 // setTimeout(getJobDetails, 3000);
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "parse_content") {
-    getJobDetails();
+  if (request.action === "parse-content") {
+    const jobInfo = getJobDetails();
+    sendResponse(jobInfo);
   }
 });
 
@@ -19,11 +20,17 @@ function getJobDetails() {
   )
     .text()
     .trim();
+  const jobInfo = {
+    title: jobTitle,
+    description: jobDescription,
+    workTime: jobWorkTime,
+  };
   chrome.runtime.sendMessage({
-    action: "jobDetails",
-    jobDescriptionContent: jobDescription,
+    action: "update-job-detail",
+    jobInfo: jobInfo,
   });
-  console.log("jobTitle", jobTitle);
-  console.log("jobDescription", jobDescription);
-  console.log("jobWorkTime", jobWorkTime);
+  return jobInfo;
+  // console.log("jobTitle", jobTitle);
+  // console.log("jobDescription", jobDescription);
+  // console.log("jobWorkTime", jobWorkTime);
 }
