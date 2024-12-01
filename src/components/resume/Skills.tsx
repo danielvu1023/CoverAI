@@ -29,27 +29,6 @@ function Skills({ jobSession }: { jobSession: any }) {
           <div>Loading skills...</div>
         )}
       </div>
-      {/* 
-        <section className="section">
-          <h2>Technical Skills</h2>
-          <ul>
-            <li>
-              <strong>Front-End Technologies:</strong> React.js, Vue.js,
-              Next.js, Gatsby.js, Redux, HTML, CSS, SASS/SCSS
-            </li>
-            <li>
-              <strong>Back-End Technologies:</strong> Java, Spring Framework,
-              Spring Boot, Spring MVC, SQL
-            </li>
-            <li>
-              <strong>Programming Languages:</strong> JavaScript, TypeScript
-            </li>
-            <li>
-              <strong>Tools & Platforms:</strong> Git, Docker, Linux
-            </li>
-          </ul>
-        </section>
-       */}
     </section>
   );
 }

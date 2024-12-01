@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Resume from "./components/resume";
 import type { JobInfo } from "./types";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 function App() {
   // @ts-ignore
   const [jobInfo, setJobInfo] = useState<JobInfo | null>(null);
+  const resumeRef = useRef(null);
 
   function updateJobDetails(jobInfo: JobInfo) {
     console.log("jobInfo", jobInfo);
@@ -115,9 +118,28 @@ function App() {
       >
         Parse Content
       </button>
+      <button
+        onClick={() => {
+          if (resumeRef !== null) {
+            html2canvas(resumeRef?.current!).then((canvas) => {
+              const imgData = canvas.toDataURL("image/png");
+              const pdf = new jsPDF();
+              // @ts-ignore
+              pdf.addImage(imgData, "JPEG", 0, 0);
+              pdf.save("download.pdf");
+            });
+          }
+        }}
+      >
+        Download PDF
+      </button>
       <p className="job-title">Apply to: {jobInfo?.title}</p>
       <hr />
-      {jobInfo !== null && <Resume jobInfo={jobInfo} />}
+      {jobInfo !== null && (
+        <div ref={resumeRef}>
+          <Resume jobInfo={jobInfo} />
+        </div>
+      )}
       {/* <p className="job-description">Description: {jobInfo?.description}</p> */}
     </div>
   );
