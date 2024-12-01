@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import MarkdownBlock from "../MarkdownBlock";
 
 function Skills({ jobSession }: { jobSession: any }) {
   const [skillLists, setSkillLists] = useState();
@@ -22,7 +23,11 @@ function Skills({ jobSession }: { jobSession: any }) {
     <section>
       <h3>Technical Skills</h3>
       <div>
-        {skillLists ? <div>{skillLists}</div> : <div>Loading skills...</div>}
+        {skillLists ? (
+          <MarkdownBlock content={skillLists} />
+        ) : (
+          <div>Loading skills...</div>
+        )}
       </div>
       {/* 
         <section className="section">

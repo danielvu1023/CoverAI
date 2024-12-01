@@ -3,15 +3,8 @@ import Resume from "./components/resume";
 import type { JobInfo } from "./types";
 
 function App() {
-  // const [jobChangeListener, setJobChangeListener] = useState();
-  const [loading, setLoading] = useState(false);
   // @ts-ignore
   const [jobInfo, setJobInfo] = useState<JobInfo | null>(null);
-  const [jobDescription, setJobDescription] = useState("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [skills, setSkills] = useState("");
-  const [listOfSkills, setListOfSkills] = useState<string[]>([]);
-  const [resume, setResume] = useState<any>(null);
 
   function updateJobDetails(jobInfo: JobInfo) {
     console.log("jobInfo", jobInfo);

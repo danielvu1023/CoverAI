@@ -12,7 +12,7 @@ function Resume({ jobInfo }: { jobInfo: JobInfo }) {
         // @ts-ignore
         const session = await ai.languageModel.create({
           systemPrompt:
-            "You are a job requirements analysis tool, specialized in analyzing job postings to identify required skills, experience, and other qualifications. Your goal is to provide clear and structured analysis results to help users better understand the job requirements. Providing html format." +
+            "You are a job requirements analysis tool, specialized in analyzing job postings to identify required skills, experience, and other qualifications. Your goal is to provide clear and structured analysis results to help users better understand the job requirements. With markdown format." +
             `The job title is: ${jobInfo.title}.` +
             `The job description is: ${jobInfo.description}.`,
         });

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import MarkdownBlock from "../MarkdownBlock";
 
 function Summary({ jobSession }: { jobSession: any }) {
-  const [summary, setSummary] = useState();
+  const [summary, setSummary] = useState("");
 
   useEffect(() => {
     async function getSummary() {
@@ -21,7 +22,11 @@ function Summary({ jobSession }: { jobSession: any }) {
   return (
     <section>
       <h3>Summary</h3>
-      {summary ? <div>{summary}</div> : <div>Loading summary...</div>}
+      {summary ? (
+        <MarkdownBlock content={summary} />
+      ) : (
+        <div>Loading summary...</div>
+      )}
     </section>
   );
 }
