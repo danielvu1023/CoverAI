@@ -10,7 +10,7 @@ function Skills({ jobSession }: { jobSession: any }) {
         console.log("getting skill...");
         const clonedSession = await jobSession.clone();
         const skillListsResp = await clonedSession.prompt(
-          "Give me only the skill list of separate by backend and frontend."
+          `Give me only the skill list of separate by "Front-End Technologies", "Back-End Technologies", "Programming Languages" and "Tools & Platforms".`
         );
         console.log("skillListsResp", skillListsResp);
         setSkillLists(skillListsResp);
