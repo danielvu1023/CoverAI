@@ -4,10 +4,16 @@ import ExperienceInput from "./components/profile/ExperienceInput";
 import type { JobInfo } from "./types";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-
+export interface WorkExperience {
+  company: string;
+  title: string;
+  location: string;
+  description: string[];
+}
 function App() {
   // @ts-ignore
   const [jobInfo, setJobInfo] = useState<JobInfo | null>(null);
+  const [workExperience, setWorkExperience] = useState<WorkExperience[]>([]);
   const resumeRef = useRef(null);
 
   useEffect(() => {
@@ -21,12 +27,46 @@ function App() {
       }
     });
   }, []);
+  const handleGenerateWorkExperience = async () => {
+    const { available } =
+      //@ts-ignore
+      await ai.languageModel.capabilities();
+
+    if (available !== "no") {
+      //@ts-ignore
+      const session = await ai.languageModel.create();
+      const result = await session.prompt(
+        `Give me a sample work experience that fits the job posting below only providing a list of only 5 items: ${jobInfo?.description}`
+      );
+
+      console.log("result", result);
+      const bullets = result.split("* ").filter(Boolean);
+      const newWorkExperience = {
+        company: "Company Name",
+        title: "Frontend Developer",
+        location: "San Jose, CA",
+        description: bullets,
+      };
+      setWorkExperience((prev) => [...prev, newWorkExperience]);
+      session.destroy();
+    }
+  };
   return (
     <div>
       <h1 className="text-cyan-600">Cover AI</h1>
       <div className="my-1">
-        <ExperienceInput />
+        <ExperienceInput
+          workExperience={workExperience}
+          setWorkExperience={setWorkExperience}
+        />
       </div>
+      <button
+        onClick={() => {
+          handleGenerateWorkExperience();
+        }}
+      >
+        Generate Work Experience
+      </button>
       <hr className="my-2" />
       <button
         className="mr-1"
@@ -63,7 +103,7 @@ function App() {
       <hr />
       {jobInfo !== null && (
         <div ref={resumeRef}>
-          <Resume jobInfo={jobInfo} />
+          <Resume jobInfo={jobInfo} workExperience={workExperience} />
         </div>
       )}
     </div>
@@ -72,6 +112,8 @@ function App() {
 }
 
 export default App;
+
+// Work experience to be availalbe for both editing and resume
 
 // useEffect(() => {
 //   async function getAIResponse() {

@@ -2,8 +2,15 @@ import { useState, useEffect } from "react";
 import Skills from "./Skills";
 import Summary from "./Summary";
 import { JobInfo } from "../../types";
+import { WorkExperience } from "../../App";
 
-function Resume({ jobInfo }: { jobInfo: JobInfo }) {
+function Resume({
+  jobInfo,
+  workExperience,
+}: {
+  jobInfo: JobInfo;
+  workExperience: WorkExperience[];
+}) {
   const [jobSession, setJobSession] = useState<any>(null);
 
   useEffect(() => {
@@ -27,6 +34,21 @@ function Resume({ jobInfo }: { jobInfo: JobInfo }) {
       <h2>Resume</h2>
 
       <div className="resume">
+        {workExperience.map((exp: WorkExperience, index: any) => {
+          return (
+            <div className="flex flex-col">
+              <p>{exp.company}</p>
+              <p>{exp.title}</p>
+              <p>{exp.location}</p>
+              <ul>
+                {" "}
+                {exp.description.map((bullet) => (
+                  <li>{bullet}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
         <Summary jobSession={jobSession} />
         <Skills jobSession={jobSession} />
         {/* 
