@@ -7,6 +7,7 @@ import SkillsInput from "./components/profile/SkillsInput";
 import type { JobInfo } from "./types";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import Header from "./components/resume/Header";
 export interface WorkExperience {
   company: string;
   title: string;
@@ -113,6 +114,9 @@ function App() {
       </button>
       <p className="job-title">Apply to: {jobInfo?.title}</p>
       <hr />
+      <div className="text-center">
+        <Header></Header>
+      </div>
       {jobInfo !== null && (
         <div ref={resumeRef}>
           <Resume jobInfo={jobInfo} workExperience={workExperience} />
