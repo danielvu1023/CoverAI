@@ -1,10 +1,12 @@
-import path from "path";
-import HTMLPlugin from "html-webpack-plugin";
-import CopyPlugin from "copy-webpack-plugin";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-export default {
+const path = require("path");
+const HTMLPlugin = require("html-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+const { fileURLToPath } = require("url");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+module.exports = {
   entry: {
     index: "./src/index.tsx",
     background: "./src/background.ts",
@@ -26,13 +28,16 @@ export default {
         exclude: /node_modules/,
       },
       {
-        exclude: /node_modules/,
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
+        exclude: /node_modules/,
       },
     ],
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+    }),
     new CopyPlugin({
       patterns: [{ from: ".", to: ".", context: "public" }],
     }),
