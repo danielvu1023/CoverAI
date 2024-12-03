@@ -25,6 +25,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
   }
 
+  if (message.action === "update-profile") {
+    chrome.storage.local.get(["profile"]).then((profileData) => {
+      chrome.storage.local.set({
+        profile: Object.assign(profileData.profile, message.profile),
+      });
+      return true;
+    });
+  }
+
   // ==================================================
 
   if (message.type === "processFile") {

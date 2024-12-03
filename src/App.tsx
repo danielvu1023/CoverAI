@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import Resume from "./components/resume";
+import Contact from "./components/profile/Contact";
+import Summary from "./components/profile/Summary";
 import ExperienceInput from "./components/profile/ExperienceInput";
+import SkillsInput from "./components/profile/SkillsInput";
 import type { JobInfo } from "./types";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
@@ -54,6 +57,15 @@ function App() {
   return (
     <div>
       <h1 className="text-cyan-600">Cover AI</h1>
+      <div className="my-1">
+        <Contact />
+      </div>
+      <div className="my-1">
+        <Summary />
+      </div>
+      <div className="my-1">
+        <SkillsInput />
+      </div>
       <div className="my-1">
         <ExperienceInput
           workExperience={workExperience}
