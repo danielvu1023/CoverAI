@@ -3,7 +3,14 @@
   "manifest_version": 3,
   "name": "CoverAI",
   "description": "Enable focus mode on Chrome's official Extensions and Chrome Web Store documentation.",
-  "permissions": ["scripting", "storage", "sidePanel", "contextMenus", "tabs"],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "sidePanel",
+    "contextMenus",
+    "tabs"
+  ],
   "side_panel": {
     "default_path": "index.html"
   },
@@ -31,11 +38,7 @@
   "content_scripts": [
     {
       "js": ["scripts/content.js"],
-      "matches": [
-        "https://developer.chrome.com/docs/extensions/*",
-        "https://developer.chrome.com/docs/webstore/*",
-        "https://www.linkedin.com/jobs/*"
-      ]
+      "matches": ["<all_urls>"]
     }
   ]
 }

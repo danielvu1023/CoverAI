@@ -7,8 +7,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const jobInfo = getJobDetails();
     sendResponse(jobInfo);
   }
+  return true;
 });
-
 function getJobDetails() {
   const $ = cheerio.load(new XMLSerializer().serializeToString(document));
 
@@ -29,8 +29,8 @@ function getJobDetails() {
     action: "update-job-detail",
     jobInfo: jobInfo,
   });
+  console.log("jobTitle", jobTitle);
+  console.log("jobDescription", jobDescription);
+  console.log("jobWorkTime", jobWorkTime);
   return jobInfo;
-  // console.log("jobTitle", jobTitle);
-  // console.log("jobDescription", jobDescription);
-  // console.log("jobWorkTime", jobWorkTime);
 }

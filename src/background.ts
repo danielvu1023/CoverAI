@@ -16,12 +16,25 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "parse-content") {
+    console.log("proxy ran");
     proxyMessageToClient(message, sendResponse);
   }
 
   if (message.action === "update-job-detail") {
     chrome.storage.local.set({
       jobInfo: message.jobInfo,
+    });
+  }
+
+  if (message.action === "update-profile") {
+    chrome.storage.local.get(["profile"]).then((profileData) => {
+      chrome.storage.local.set({
+        profile: Object.assign(
+          profileData.profile || {},
+          message.profile || {}
+        ),
+      });
+      return true;
     });
   }
 
