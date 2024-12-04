@@ -22,22 +22,6 @@ export default function ExperienceInput({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [experience, setExperience] = useState<ExperienceInfo[]>([]);
 
-  useEffect(() => {
-    chrome.storage.local.get("profile").then((profileData) => {
-      if (profileData) {
-        setExperience(profileData.profile?.experience || []);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    chrome.runtime.sendMessage({
-      action: "update-profile",
-      profile: {
-        experience: experience,
-      },
-    });
-  }, [experience]);
   const addExperience = () => {
     setEditingIndex(experience.length);
     setExperience([
@@ -96,20 +80,21 @@ export default function ExperienceInput({
       ))}
       {workExperience.map((exp: WorkExperience, index: any) => {
         return (
-          <div className="flex flex-col">
-            <p>{exp.company}</p>
-            <p>{exp.title}</p>
-            <p>{exp.location}</p>
+          <div className="flex flex-col gap-1">
+            <p className="text-[18px] font-bold">{exp.company}</p>
+            <p className="text-[16px]">{exp.title}</p>
+            <p className="text-[16px]">{exp.location}</p>
             <ul>
               {" "}
               {exp.description.map((bullet) => (
-                <li>{bullet}</li>
+                <li>- {bullet}</li>
               ))}
             </ul>
             <button
               onClick={() => {
                 handleEdit(index);
               }}
+              className="w-[20%] mt-2"
             >
               Edit
             </button>
@@ -117,7 +102,7 @@ export default function ExperienceInput({
         );
       })}
       {openEdit && (
-        <div>
+        <div className="flex flex-col">
           <input
             placeholder="company"
             value={editContent.company}
@@ -163,6 +148,7 @@ export default function ExperienceInput({
             onClick={() => {
               handleSubmitEdit();
             }}
+            className="w-[20%] mt-2"
           >
             Submit
           </button>
