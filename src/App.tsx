@@ -82,7 +82,7 @@ function App() {
       //@ts-ignore
       const session = await ai.languageModel.create();
       const result = await session.prompt(
-        `Give me a personal summary that fits this job description: ${jobInfo?.description}`
+        `Give me a personal summary that fits this job description: ${jobInfo?.description}, only plan text with 4-5 sentences.`
       );
 
       setSummary(result);
