@@ -5,7 +5,7 @@ export default function Summary() {
   useEffect(() => {
     chrome.storage.local.get("profile").then((profileData) => {
       if (profileData) {
-        setSummary(profileData.profile.summary);
+        setSummary(profileData.profile?.summary || "");
       }
       return true;
     });

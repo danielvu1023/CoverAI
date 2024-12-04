@@ -7,7 +7,6 @@ import SkillsInput from "./components/profile/SkillsInput";
 import type { JobInfo } from "./types";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-import Header from "./components/resume/Header";
 export interface WorkExperience {
   company: string;
   title: string;
@@ -18,6 +17,13 @@ function App() {
   // @ts-ignore
   const [jobInfo, setJobInfo] = useState<JobInfo | null>(null);
   const [workExperience, setWorkExperience] = useState<WorkExperience[]>([]);
+  const [skills, setSkills] = useState([]);
+  const [summary, setSummary] = useState("");
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [location, setLocation] = useState("");
+  const [loading, setLoading] = useState(false);
   const resumeRef = useRef(null);
 
   useEffect(() => {
@@ -31,6 +37,59 @@ function App() {
       }
     });
   }, []);
+  useEffect(() => {
+    if (!jobInfo) {
+      return;
+    }
+    async function handleResume() {
+      setLoading(true);
+      await handleGenerateSummary();
+      await handleGenerateSkills();
+      await handleGenerateWorkExperience();
+      setLoading(false);
+    }
+    handleResume();
+  }, [jobInfo]);
+  const handleGenerateSkills = async () => {
+    console.log("generate skills ran");
+    const { available } =
+      //@ts-ignore
+      await ai.languageModel.capabilities();
+    console.log("available", available);
+    if (available !== "no") {
+      //@ts-ignore
+      const session = await ai.languageModel.create();
+      console.log("session", session);
+
+      const result = await session.prompt(
+        `Can you give me only a simple bulleted list of skills found in this job post: ${jobInfo?.description}`
+      );
+
+      console.log("result", result);
+      const bullets = result.split("* ").filter(Boolean);
+
+      console.log("bullets", bullets);
+      setSkills(bullets);
+      session.destroy();
+    }
+  };
+  const handleGenerateSummary = async () => {
+    const { available } =
+      //@ts-ignore
+      await ai.languageModel.capabilities();
+
+    if (available !== "no") {
+      //@ts-ignore
+      const session = await ai.languageModel.create();
+      const result = await session.prompt(
+        `Give me a personal summary that fits this job description: ${jobInfo?.description}`
+      );
+
+      setSummary(result);
+      session.destroy();
+    }
+  };
+
   const handleGenerateWorkExperience = async () => {
     const { available } =
       //@ts-ignore
@@ -55,12 +114,41 @@ function App() {
       session.destroy();
     }
   };
+
   return (
     <div>
       <h1 className="text-cyan-600">Cover AI</h1>
-      <div className="my-1">
-        <Contact />
-      </div>
+      <input
+        type="text"
+        name="name"
+        className="mr-1"
+        placeholder="Name"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+      />
+      <input
+        type="text"
+        name="phoneNumber"
+        className="mr-1"
+        placeholder="Phone Number"
+        value={phoneNumber}
+        onChange={(event) => setPhoneNumber(event.target.value)}
+      />
+      <input
+        type="text"
+        name="email"
+        placeholder="Email"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+      />
+      <input
+        type="text"
+        name="location"
+        placeholder="Location"
+        value={location}
+        onChange={(event) => setLocation(event.target.value)}
+      />
+
       <div className="my-1">
         <Summary />
       </div>
@@ -79,6 +167,20 @@ function App() {
         }}
       >
         Generate Work Experience
+      </button>
+      <button
+        onClick={() => {
+          handleGenerateSkills();
+        }}
+      >
+        Generate Skill
+      </button>
+      <button
+        onClick={() => {
+          handleGenerateSummary();
+        }}
+      >
+        Generate Summary
       </button>
       <hr className="my-2" />
       <button
@@ -114,12 +216,23 @@ function App() {
       </button>
       <p className="job-title">Apply to: {jobInfo?.title}</p>
       <hr />
-      <div className="text-center">
-        <Header></Header>
-      </div>
+
       {jobInfo !== null && (
         <div ref={resumeRef}>
-          <Resume jobInfo={jobInfo} workExperience={workExperience} />
+          {loading ? (
+            <div>Loading Resume...</div>
+          ) : (
+            <Resume
+              jobInfo={jobInfo}
+              workExperience={workExperience}
+              skills={skills}
+              summary={summary}
+              name={name}
+              location={location}
+              phoneNumber={phoneNumber}
+              email={email}
+            />
+          )}
         </div>
       )}
     </div>

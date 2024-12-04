@@ -4,7 +4,7 @@ export default function SkillsInput() {
   useEffect(() => {
     chrome.storage.local.get("profile").then((profileData) => {
       if (profileData) {
-        setSkills(profileData.profile.skills || []);
+        setSkills(profileData.profile?.skills || []);
       }
       return true;
     });
